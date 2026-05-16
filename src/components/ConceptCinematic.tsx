@@ -320,19 +320,20 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
               {heroName.split('').map((letter, i) => {
                 if (letter === '\n') return <br key={i} />;
                 return (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 100 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                      delay: 0.1 + i * 0.035,
-                      duration: 0.8,
-                      ease: [0.16, 1, 0.3, 1]
-                    }}
-                    className="inline-block"
-                  >
-                    {letter === ' ' ? '\u00A0' : letter}
-                  </motion.span>
+                  <span key={i} className="inline-flex overflow-hidden" style={{ verticalAlign: 'bottom' }}>
+                    <motion.span
+                      initial={{ y: "110%", rotate: 12, opacity: 0 }}
+                      animate={{ y: "0%", rotate: 0, opacity: 1 }}
+                      transition={{ 
+                        delay: 0.1 + i * 0.035,
+                        duration: 0.8,
+                        ease: [0.16, 1, 0.3, 1]
+                      }}
+                      className="inline-block origin-bottom-left"
+                    >
+                      {letter === ' ' ? '\u00A0' : letter}
+                    </motion.span>
+                  </span>
                 );
               })}
             </h1>
