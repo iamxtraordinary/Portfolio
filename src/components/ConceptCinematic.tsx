@@ -289,14 +289,6 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
 
       {/* ─── Scene 1: Hero ─── */}
       <section className="h-screen flex flex-col items-center justify-center sticky top-0 overflow-hidden bg-[var(--bg)]">
-        {/* Ascii Background */}
-        <motion.div
-          style={{ opacity: spotlightOpacity, scale: spotlightScale }}
-          className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-plus-lighter"
-        >
-          <AsciiCanvas />
-        </motion.div>
-
         {/* Radial spotlight — scales up on scroll for dramatic exit */}
         <motion.div 
           style={{ scale: spotlightScale, opacity: spotlightOpacity }}
@@ -328,20 +320,19 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
               {heroName.split('').map((letter, i) => {
                 if (letter === '\n') return <br key={i} />;
                 return (
-                  <span key={i} className="inline-block overflow-hidden pb-[2vw] -mb-[2vw] align-bottom relative">
-                    <motion.span
-                      initial={{ y: "120%", rotate: 8, opacity: 0, filter: "blur(8px)" }}
-                      animate={{ y: "0%", rotate: 0, opacity: 1, filter: "blur(0px)" }}
-                      transition={{ 
-                        delay: 0.1 + i * 0.04,
-                        duration: 1.1,
-                        ease: [0.16, 1, 0.3, 1]
-                      }}
-                      className="inline-block origin-bottom-left"
-                    >
-                      {letter === ' ' ? '\u00A0' : letter}
-                    </motion.span>
-                  </span>
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: 0.1 + i * 0.035,
+                      duration: 0.8,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
+                    className="inline-block"
+                  >
+                    {letter === ' ' ? '\u00A0' : letter}
+                  </motion.span>
                 );
               })}
             </h1>
