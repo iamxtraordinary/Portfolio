@@ -11,59 +11,7 @@ const projects = [
   { id: 4, title: "Inmotion Hub", category: "Internship Project", image: "https://picsum.photos/seed/inm99/1200/800", video: undefined, link: "#" },
 ];
 
-/* ─── Custom Cursor ─── */
-const CustomCursor = () => {
-  const [isHovering, setIsHovering] = useState(false);
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const springX = useSpring(cursorX, { damping: 20, stiffness: 200 });
-  const springY = useSpring(cursorY, { damping: 20, stiffness: 200 });
 
-  useEffect(() => {
-    const move = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-    };
-    const over = (e: MouseEvent) => {
-      setIsHovering(!!(e.target as HTMLElement).closest('a, button, .interactive'));
-    };
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseover', over);
-    return () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseover', over);
-    };
-  }, [cursorX, cursorY]);
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
-      style={{ x: springX, y: springY, translateX: '-50%', translateY: '-50%' }}
-    >
-      <motion.div
-        animate={{ 
-          width: isHovering ? 64 : 12,
-          height: isHovering ? 64 : 12,
-          borderWidth: isHovering ? 2 : 2,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className="rounded-full border-[var(--accent)] flex items-center justify-center"
-        style={{ borderStyle: 'solid', borderColor: 'var(--accent)' }}
-      >
-        {isHovering && (
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.5 }} 
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-[7px] font-bold text-[var(--accent)] uppercase tracking-wider"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            View
-          </motion.span>
-        )}
-      </motion.div>
-    </motion.div>
-  );
-};
 
 /* ─── Magnetic Button ─── */
 const MagneticButton = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
@@ -319,9 +267,8 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
   return (
     <motion.div 
       ref={containerRef}
-      className="relative cursor-none overflow-x-hidden bg-transparent text-[var(--text)]"
+      className="relative overflow-x-hidden bg-transparent text-[var(--text)]"
     >
-      <CustomCursor />
 
       {/* Grain Overlay */}
       <div 
@@ -333,8 +280,8 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
       <div className="fixed inset-0 z-[-1] pointer-events-none">
         <EtheralShadow 
            color="var(--accent)" 
-           animation={{ scale: 100, speed: 90 }}
-           noise={{ opacity: 1, scale: 1.2 }}
+           animation={{ scale: 30, speed: 30 }}
+           noise={{ opacity: 0.6, scale: 1.2 }}
            sizing="fill"
         />
       </div>
