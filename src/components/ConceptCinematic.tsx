@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence, useMotionTemplate } from 'motion/react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import AsciiCanvas from './AsciiCanvas';
+import { EtheralShadow } from './ui/etheral-shadow';
 
 const projects = [
   { id: 1, title: "Workvite", category: "Software Engineering", image: "/workvite.png", video: "/workvideo.MOV", link: "https://workvite.vercel.app" },
@@ -250,6 +251,46 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
   );
 };
 
+/* ─── Scramble Text ─── */
+const ScrambleText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+  const [displayText, setDisplayText] = useState("");
+  const chars = "!<>-_\\\\/[]{}—=+*^?#________";
+  
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
+    
+    timeout = setTimeout(() => {
+      let iteration = 0;
+      interval = setInterval(() => {
+        setDisplayText(
+          text
+            .split("")
+            .map((letter, index) => {
+              if (index < iteration) return text[index];
+              return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join("")
+        );
+        
+        if (iteration >= text.length) {
+          clearInterval(interval);
+        }
+        iteration += 1 / 3;
+      }, 30);
+    }, delay);
+    
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [text, delay]);
+
+  return <span>{displayText || "\u00A0"}</span>;
+};
+
+/* ─── Removed ViewfinderHUD ─── */
+
 /* ─── Main Component ─── */
 export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: string) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -269,6 +310,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
   // Counter
   const scrollPercent = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const counterSpring = useSpring(scrollPercent, { stiffness: 100, damping: 30 });
+  const formattedCounter = useTransform(counterSpring, (v) => `[ ${Math.round(v).toString().padStart(2, '0')}% ]`);
 
   const heroName = "Emmanuel\n Okaka";
 
@@ -277,7 +319,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
   return (
     <motion.div 
       ref={containerRef}
-      className="relative cursor-none overflow-x-hidden bg-[var(--bg)] text-[var(--text)]"
+      className="relative cursor-none overflow-x-hidden bg-transparent text-[var(--text)]"
     >
       <CustomCursor />
 
@@ -287,8 +329,19 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
         style={{ filter: 'url(#grain)', width: '100%', height: '100%' }}
       />
 
+      {/* Global Etheral Shadow Background */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
+        <EtheralShadow 
+           color="var(--accent)" 
+           animation={{ scale: 100, speed: 90 }}
+           noise={{ opacity: 1, scale: 1.2 }}
+           sizing="fill"
+        />
+      </div>
+
       {/* ─── Scene 1: Hero ─── */}
-      <section className="h-screen flex flex-col items-center justify-center sticky top-0 overflow-hidden bg-[var(--bg)]">
+      <section className="h-screen flex flex-col items-center justify-center sticky top-0 overflow-hidden bg-transparent">
+        
         {/* Radial spotlight — scales up on scroll for dramatic exit */}
         <motion.div 
           style={{ scale: spotlightScale, opacity: spotlightOpacity }}
@@ -297,7 +350,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
         
         {/* Telemetry Micro-copy */}
         <div className="absolute top-8 left-8 text-[10px] text-[#71717A] tracking-[0.3em] uppercase z-10" style={{ fontFamily: 'var(--font-mono)' }}>
-          SYSTEM ONLINE // V4.2
+          <ScrambleText text="SYSTEM ONLINE // V4.2" delay={500} />
         </div>
         <div className="absolute top-8 right-8 text-[10px] text-[#71717A] tracking-[0.3em] uppercase z-10 text-right hidden md:block" style={{ fontFamily: 'var(--font-mono)' }}>
           [01] CREATIVE_DEVELOPMENT<br />
@@ -343,10 +396,16 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
               initial={{ scale: 0, rotate: -10 }}
               animate={{ scale: 1, rotate: -3 }}
               transition={{ delay: 1.2, type: "spring", stiffness: 200, damping: 20 }}
-              className="absolute -top-4 right-[5%] md:-top-8 md:right-[15%] bg-[var(--bg)]/80 backdrop-blur-md border border-[var(--border)] shadow-xl rounded-full px-4 py-2 flex items-center gap-2 z-20"
+              className="absolute -top-4 right-[5%] md:-top-8 md:right-[15%] z-20"
             >
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-[var(--text)]" style={{ fontFamily: 'var(--font-mono)' }}>Available for work</span>
+              <motion.div
+                animate={{ y: [0, -8, 0], rotate: [0, 4, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="bg-[var(--bg)]/80 backdrop-blur-md border border-[var(--border)] shadow-xl rounded-full px-4 py-2 flex items-center gap-2"
+              >
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-[var(--text)]" style={{ fontFamily: 'var(--font-mono)' }}>Available for work</span>
+              </motion.div>
             </motion.div>
           </div>
         </motion.div>
@@ -363,7 +422,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
             className="mt-8 text-xs md:text-sm uppercase tracking-[0.4em] text-[#71717A]"
             style={{ fontFamily: 'var(--font-mono)' }}
           >
-            Mobile & Backend Engineer
+            <ScrambleText text="Mobile & Backend Engineer" delay={1200} />
           </motion.p>
 
           {/* Accent line */}
@@ -375,28 +434,24 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
           />
         </motion.div>
 
-        {/* Scroll indicator — fades out immediately on scroll */}
+        {/* Scroll Progress Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          style={{ opacity: scrollIndicatorOpacity }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-[100] mix-blend-difference pointer-events-none"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-[#71717A]" style={{ fontFamily: 'var(--font-mono)' }}>
-            Scroll
-          </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          <motion.div 
+            className="text-xs md:text-sm font-bold tracking-[0.3em] text-[var(--accent)]" 
+            style={{ fontFamily: 'var(--font-mono)' }}
           >
-            <ChevronDown className="w-4 h-4 text-[var(--accent)]" />
+            {formattedCounter}
           </motion.div>
         </motion.div>
       </section>
 
       {/* ─── About Me Section ─── */}
-      <section className="relative z-10 bg-[var(--bg)] py-24 md:py-32 px-8 md:px-16 lg:px-24 overflow-hidden">
+      <section className="relative z-10 bg-transparent py-24 md:py-32 px-8 md:px-16 lg:px-24 overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-20">
           {/* Left column — Text & Stats */}
           <div className="flex-1 space-y-8">
@@ -571,7 +626,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
       </section>
 
       {/* ─── Scene 2: Stacked Card Peel Gallery ─── */}
-      <div className="relative z-10 bg-[var(--bg)]">
+      <div className="relative z-10 bg-transparent">
         {/* Section header */}
         <div className="sticky top-0 z-50 pointer-events-none">
           <motion.div

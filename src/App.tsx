@@ -49,15 +49,15 @@ export default function App() {
               className={cn(
                 "relative px-5 py-2.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors flex items-center gap-2",
                 activePage === page.id 
-                  ? "text-[#08080A]" 
-                  : "text-[#71717A] hover:text-[#D4D4D8]"
+                  ? "text-[var(--text)]" 
+                  : "text-[var(--border)] hover:text-[var(--text)]"
               )}
               style={{ fontFamily: "'Syne', sans-serif" }}
             >
               {activePage === page.id && (
                 <motion.div 
                   layoutId="nav-pill"
-                  className="absolute inset-0 bg-[#EAE0CF] rounded-full shadow-[0_0_20px_rgba(234,224,207,0.3)]"
+                  className="absolute inset-0 bg-[var(--bg)] rounded-full shadow-[0_0_20px_var(--accent-glow)]"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
@@ -88,12 +88,12 @@ export default function App() {
       {/* Design System Styles */}
       <style>{`
         :root {
-          --bg: #EAE0CF;
-          --text: #213448;
-          --muted: #547792;
-          --accent: #547792;
-          --accent-glow: rgba(84, 119, 146, 0.15);
-          --border: #94B4C1;
+          --bg: #0D1B2A;
+          --text: #E0E1DD;
+          --muted: #778DA9;
+          --accent: #778DA9;
+          --accent-glow: rgba(119, 141, 169, 0.15); /* #778DA9 in rgb */
+          --border: #415A77;
           
           --font-display: 'Oswald', sans-serif;
           --font-body: 'DM Sans', sans-serif;
