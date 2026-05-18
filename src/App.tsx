@@ -24,13 +24,7 @@ export default function App() {
 
   return (
     <div className="relative">
-      {/* SVG Noise Filter — reusable across pages */}
-      <svg className="fixed w-0 h-0" aria-hidden="true">
-        <filter id="grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
-      </svg>
+
 
       {/* Navigation */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000]">

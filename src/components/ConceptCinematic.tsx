@@ -59,7 +59,7 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0]);
   const rotateX = useTransform(scrollYProgress, [0, 1], [0, -5]);
-  const brightness = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.5]);
 
   return (
     <div
@@ -72,9 +72,9 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
           scale,
           opacity,
           rotateX,
-          filter: useTransform(brightness, v => `brightness(${v})`),
           transformPerspective: 1200,
           transformOrigin: "center top",
+          willChange: "transform, opacity"
         }}
         className="sticky top-0 h-screen w-full flex items-center justify-center px-6 md:px-16"
       >
@@ -100,6 +100,9 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
             />
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
+            
+            {/* Scroll-based darkening overlay (replaces brightness filter) */}
+            <motion.div style={{ opacity: overlayOpacity }} className="absolute inset-0 bg-black pointer-events-none" />
 
             {/* Hover glow */}
             <div className="absolute inset-0 bg-[var(--accent)] opacity-0 group-hover:opacity-[0.06] transition-opacity duration-500 mix-blend-overlay" />
@@ -132,7 +135,7 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[300] flex items-center justify-center p-6 md:p-12 bg-black/80 backdrop-blur-xl interactive"
+              className="fixed inset-0 z-[300] flex items-center justify-center p-6 md:p-12 bg-black/95 interactive"
               onClick={() => setIsExpanded(false)}
             >
               <motion.div
@@ -144,7 +147,7 @@ const PeelCard = ({ project, index, totalCards }: { project: typeof projects[0];
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 md:p-8 border-b border-[var(--border)] z-10 bg-[var(--bg)]/80 backdrop-blur-md absolute top-0 left-0 right-0">
+                <div className="flex items-center justify-between p-6 md:p-8 border-b border-[var(--border)] z-10 bg-[var(--bg)]/95 absolute top-0 left-0 right-0">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1" style={{ fontFamily: 'var(--font-mono)' }}>{project.category}</p>
                     <h3 className="text-2xl font-bold uppercase tracking-tight text-[var(--text)]" style={{ fontFamily: 'var(--font-display)' }}>{project.title}</h3>
@@ -270,11 +273,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
       className="relative overflow-x-hidden bg-transparent text-[var(--text)]"
     >
 
-      {/* Grain Overlay */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03]"
-        style={{ filter: 'url(#grain)', width: '100%', height: '100%' }}
-      />
+
 
       {/* Global Etheral Shadow Background */}
       <div className="fixed inset-0 z-[-1] pointer-events-none">
@@ -348,7 +347,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
               <motion.div
                 animate={{ y: [0, -8, 0], rotate: [0, 4, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="bg-[var(--bg)]/80 backdrop-blur-md border border-[var(--border)] shadow-xl rounded-full px-4 py-2 flex items-center gap-2"
+                className="bg-[var(--bg)]/95 border border-[var(--border)] shadow-xl rounded-full px-4 py-2 flex items-center gap-2"
               >
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-[var(--text)]" style={{ fontFamily: 'var(--font-mono)' }}>Available for work</span>
@@ -386,7 +385,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-[100] mix-blend-difference pointer-events-none"
+          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-[100] pointer-events-none"
         >
           <motion.div 
             className="text-xs md:text-sm font-bold tracking-[0.3em] text-[var(--accent)]" 
@@ -491,7 +490,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               {/* Tap hint */}
               <div
-                className={`absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md rounded-full px-4 py-1.5 pointer-events-none transition-all duration-300 ${photosExpanded ? 'opacity-0 translate-y-2' : 'opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'}`}
+                className={`absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/90 rounded-full px-4 py-1.5 pointer-events-none transition-all duration-300 ${photosExpanded ? 'opacity-0 translate-y-2' : 'opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'}`}
               >
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/90" style={{ fontFamily: 'var(--font-mono)' }}>
                   Tap me
@@ -511,7 +510,7 @@ export default function ConceptCinematic({ onNavigate }: { onNavigate?: (page: s
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={() => setPhotosExpanded(false)}
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] cursor-pointer"
+                    className="fixed inset-0 bg-black/80 z-[200] cursor-pointer"
                   />
 
                   {/* Draggable extra photos */}
